@@ -1,11 +1,11 @@
+import * as bodyParser from 'body-parser';
 // import * as express from 'express';
 import express = require('express');
-import * as bodyParser from 'body-parser';
 
-import { taskRoute } from './components/tasks/routes';
+import { routes as TaskRoutes } from './components/tasks/routes';
 
 class Todo {
-  app: express.Express;
+  public app: express.Express;
 
   constructor() {
     this.app = express();
@@ -14,10 +14,10 @@ class Todo {
     this.errorHandling();
   }
 
-  private bodyParser() {
+  private bodyParser(): void {
     this.app.use('/', bodyParser.json());
   }
-  private errorHandling() {
+  private errorHandling(): void {
     this.app.use(
       '/',
       (
@@ -29,8 +29,8 @@ class Todo {
       }
     );
   }
-  private bindTaskRoutes() {
-    this.app.use('/task/', taskRoute);
+  private bindTaskRoutes(): void {
+    this.app.use('/task/', TaskRoutes);
   }
 }
 
