@@ -1,14 +1,16 @@
 import { ObjectId } from 'mongodb';
-import { IBackTaskData, ITaskInterface } from '../../helper/task/interface';
+import { IBackTaskData, ITask } from '../../helper/task/interface';
 import { repo } from './repository';
 
-export class Task implements ITaskInterface {
+export class Task implements ITask {
   public readonly call: string;
   public readonly status: boolean;
+  public readonly idUser: ObjectId;
 
-  constructor(call: string, status?: boolean) {
+  constructor(call: string, idUser?: string) {
     this.call = call;
-    this.status = status ? status : false;
+    this.status = false;
+    this.idUser = new ObjectId(idUser);
   }
 
   public async save(): Promise<void> {
@@ -34,6 +36,15 @@ export class Task implements ITaskInterface {
       throw new Error(err);
     }
   }
+  public static async deleteForUser(idUser: ObjectId | string): Promise<void> {
+    try {
+      await repo.deleteTaskForUser(
+        typeof idUser === 'string' ? new ObjectId(idUser) : idUser
+      );
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
   public static async done(idTask: string): Promise<void> {
     try {
       await Task.existingTask(idTask);
@@ -42,7 +53,7 @@ export class Task implements ITaskInterface {
       throw new Error(err);
     }
   }
-  public static async get(idTask: string): Promise<IBackTaskData | null> {
+  public static async get(idTask: string): Promise<ITask | null> {
     try {
       return await repo.getTask(new ObjectId(idTask));
     } catch (err) {
@@ -59,9 +70,20 @@ export class Task implements ITaskInterface {
       throw new Error(err);
     }
   }
+  public static async getUserTasks(
+    page: number,
+    amount: number,
+    idUser: string
+  ): Promise<IBackTaskData> {
+    try {
+      return await repo.getUserTasks(page, amount, new ObjectId(idUser));
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
   private static async existingTask(idTask: string): Promise<void> {
     try {
-      const taskExisting: IBackTaskData | null = await repo.getTask(
+      const taskExisting: ITask | null = await repo.getTask(
         new ObjectId(idTask)
       );
       if (!taskExisting) {

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { IBackTaskData } from '../../helper/task/interface';
+import { ITask } from '../../helper/task/interface';
 import { Task } from './service';
 
 export class Controller {
@@ -9,7 +9,7 @@ export class Controller {
     next: NextFunction
   ): Promise<void> {
     try {
-      await new Task(req.body.call).save();
+      await new Task(req.body.call, req.headers.authorization).save();
       res.send({ msg: 'Task created' });
     } catch (err) {
       res.send({ err: err.message });
@@ -21,7 +21,7 @@ export class Controller {
     next: NextFunction
   ): Promise<void> {
     try {
-      await new Task(req.body.call, req.body.status).edit(req.params.idTask);
+      await new Task(req.body.call).edit(req.params.idTask);
       res.send({ msg: 'Task edited' });
     } catch (err) {
       res.send({ err: err.message });
@@ -57,7 +57,7 @@ export class Controller {
     next: NextFunction
   ): Promise<void> {
     try {
-      const task: IBackTaskData | null = await Task.get(req.params.idTask);
+      const task: ITask | null = await Task.get(req.params.idTask);
       if (task) {
         res.send(task);
       } else {
@@ -77,6 +77,23 @@ export class Controller {
         await Task.getAll(
           parseInt(req.params.page),
           parseInt(req.params.amount)
+        )
+      );
+    } catch (err) {
+      res.send({ err: err.message });
+    }
+  }
+  public static async getAllUser(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      res.send(
+        await Task.getUserTasks(
+          parseInt(req.params.page),
+          parseInt(req.params.amount),
+          req.headers.authorization ? req.headers.authorization : ''
         )
       );
     } catch (err) {

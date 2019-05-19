@@ -12,6 +12,7 @@ class Route {
 
     this.addGetTasksRoute();
     this.addGetTaskRoute();
+    this.addGetTasksByUserRoute();
     this.addPostTaskRoute();
     this.addPutTaskRoute();
     this.addDelTaskRoute();
@@ -40,11 +41,14 @@ class Route {
         param('idTask')
           .isString()
           .isLength({ min: 24, max: 24 })
-          .withMessage('idTask must be a number')
+          .withMessage('idTask must be a string')
       ],
       checkError,
       Controller.get
     );
+  }
+  private addGetTasksByUserRoute(): void {
+    this.routes.get('/user', Controller.getAllUser);
   }
   private addPostTaskRoute(): void {
     this.routes.post(
@@ -66,7 +70,7 @@ class Route {
         param('idTask')
           .isString()
           .isLength({ min: 24, max: 24 })
-          .withMessage('idTask must be a number'),
+          .withMessage('idTask must be a string'),
         body('call')
           .isLength({ min: 2, max: 100 })
           .isString()
@@ -83,7 +87,7 @@ class Route {
         param('idTask')
           .isString()
           .isLength({ min: 24, max: 24 })
-          .withMessage('idTask must be a number')
+          .withMessage('idTask must be a string')
       ],
       checkError,
       Controller.delete
@@ -96,7 +100,7 @@ class Route {
         param('idTask')
           .isString()
           .isLength({ min: 24, max: 24 })
-          .withMessage('idTask must be a number')
+          .withMessage('idTask must be a string')
       ],
       checkError,
       Controller.done

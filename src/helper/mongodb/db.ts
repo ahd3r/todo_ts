@@ -4,7 +4,8 @@ import { IMongoHelperInterface } from './interface';
 
 class MongoHelperConnect implements IMongoHelperInterface {
   public readonly client: Promise<mongo.MongoClient>;
-  private readonly uri: string = 'localhost_or_cloud';
+  private readonly uri: string =
+    'mongodb+srv://root:1111@todo-pqrnr.mongodb.net/test?retryWrites=true';
 
   constructor() {
     this.client = this.connect();

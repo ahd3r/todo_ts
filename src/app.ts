@@ -9,11 +9,26 @@ class Todo {
 
   constructor() {
     this.app = express();
+    this.acaoProtect();
     this.bodyParser();
     this.bindTaskRoutes();
     this.errorHandling();
   }
 
+  private acaoProtect(): void {
+    this.app.use(
+      (
+        req: express.Request,
+        resp: express.Response,
+        next: express.NextFunction
+      ) => {
+        resp.header('Access-Control-Allow-Origin', '*');
+        resp.header('Access-Control-Allow-Methods', '*');
+        resp.header('Access-Control-Allow-Headers', '*');
+        next();
+      }
+    );
+  }
   private bodyParser(): void {
     this.app.use('/', bodyParser.json());
   }
